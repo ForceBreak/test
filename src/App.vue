@@ -14,6 +14,12 @@
             <p>It repeats: {{ textResult.count }} times</p>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col lg="12">
+            <v-btn @click="paramsToObject()">Get params object</v-btn>
+            {{ urlObject }}
+          </v-col>
+        </v-row>
       </v-container>
     </v-content>
   </v-app>
@@ -29,7 +35,8 @@ export default {
       textResult: {
         letter: '',
         count: 0
-      }
+      },
+      urlObject: {}
     }
   },
   methods: {
@@ -51,6 +58,16 @@ export default {
           this.textResult = e 
         }
       }) 
+    },
+    paramsToObject() {
+      const urlParams = new URLSearchParams(window.location.search.substr(1));
+      const entries = urlParams.entries();
+      let result = {}
+      for(let entry of entries) {
+        const [key, value] = entry;
+        result[key] = value;
+      }
+      this.urlObject = result;
     }
   }
 }
