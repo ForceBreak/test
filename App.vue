@@ -52,6 +52,54 @@
               </v-form>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col lg="3" v-for="item in list" :key="item.id">
+            <v-card class="mx-auto text-center">
+              <v-card-subtitle class="pb-0 pt-2">
+                #{{ item.id }}
+              </v-card-subtitle>
+              <v-card-subtitle class="pb-0 pt-0">
+                {{ item.title }}
+              </v-card-subtitle>
+              <v-card-subtitle class="pb-4 pt-0">
+                {{ item.sku }}
+              </v-card-subtitle>
+
+              <v-img
+                class="white--text align-end"
+                height="200px"
+                :src="item.image"
+              />
+
+              <v-card-title class="justify-center subtitle-2 font-weight-bold pb-0">
+                PRODUCT OPTIONS:
+              </v-card-title>
+
+              <v-card-text class="text--primary text-left pb-0">
+                <v-list-item v-for="(elem, index) in item.options" :key="index">
+                  <v-list-item-content >
+                    <v-list-item-subtitle>
+                      Metal type: {{ elem.metal_type }}
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle>
+                      Metal color: {{ elem.metal_color }}
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle>
+                      Stone shape: {{ elem.stone_shape }}
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle>
+                      Gemstone color: {{ elem.gemstone_color }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-card-text>
+
+              <v-card-title class="justify-center title font-weight-bold pt-0">
+                {{ formatPrice(item.price) }} {{ item.currency }}
+              </v-card-title>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-container>
     </v-content>
   </v-app>
@@ -78,7 +126,8 @@ export default {
           return pattern.test(value) || 'Only numbers'
         }
       },
-      keyName: 'num23'
+      keyName: 'num23',
+      list: []
     }
   },
   methods: {
@@ -122,6 +171,18 @@ export default {
     },
     set() {
       localStorage.setItem(this.keyName, this.formText)
+    },
+    getList() {
+      this.$http.get('http://54.39.188.42')
+      .then(res => {
+        let decode = atob(res.data)
+        let parseDecoded = JSON.parse(decode)
+        this.list = [...parseDecoded]
+        console.log(this.list)
+      })
+    },
+    formatPrice(price) {
+      return parseFloat(Number(price).toFixed(2))
     }
   },
   computed:{
@@ -131,6 +192,7 @@ export default {
   },
   mounted() {
     this.formStorageText = localStorage.getItem(this.keyName)
+    this.getList()
   }
 }
 </script>
@@ -141,5 +203,9 @@ export default {
 }
 .odd{
   color: red;
+}
+.title{
+  width: 100%;
+  text-align: center;
 }
 </style>
